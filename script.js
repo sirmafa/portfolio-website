@@ -19,8 +19,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Form submission handling
-const contactForm = document.querySelector('#contact form');
-contactForm.addEventListener('submit', function(e) {
+const contactForm = document.getElementById('contactForm');
+contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     // Get form values
@@ -29,12 +29,34 @@ contactForm.addEventListener('submit', function(e) {
     const subject = document.getElementById('subject').value;
     const message = document.getElementById('message').value;
     
-    // Here you would typically send the form data to a server
-    console.log('Form submitted:', { name, email, subject, message });
+    // Show loading state
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
     
-    // Show success message
-    alert('Thank you for your message! I will get back to you soon.');
-    
-    // Reset form
-    contactForm.reset();
+    try {
+        //API Gateway URL
+        const response = await fetch('https://ova721zwd7.execute-api.us-east-1.amazonaws.com/prod/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, subject, message })
+        });
+        
+        if (response.ok) {
+            alert('Thank you for reaching out! I will get back to you soon.');
+            contactForm.reset();
+        } else {
+            throw new Error('Failed to send message');
+        }
+    } catch (error) {
+        alert('Sorry, there was an error sending your message. Please try again.');
+        console.error('Error:', error);
+    } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
 });
