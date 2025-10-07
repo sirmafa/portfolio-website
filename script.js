@@ -39,7 +39,7 @@ contactForm.addEventListener('submit', async function(e) {
         console.log('Sending form data:', { name, email, subject, message });
         
         //API Gateway URL
-        const response = await fetch('https://uk5t4xna4f.execute-api.us-east-1.amazonaws.com/prod/contact', {
+        const response = await fetch('https://uk5t4xna4f.execute-api.us-east-1.amazonaws.com/prod/contact?v=' + Date.now(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
