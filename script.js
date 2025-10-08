@@ -18,7 +18,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Initialize EmailJS
+// Initialize EmailJS - Updated for production
 (function() {
     emailjs.init('u_KSwvc8g5_hu7Q0z');
 })();
