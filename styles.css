@@ -2,8 +2,8 @@
 
 body {
     font-family: 'Space Grotesk', sans-serif;
-    background-color: #0c1821;
-    color: #ccc9dc;
+    background-color: #190933;
+    color: #e0dce8;
     scroll-behavior: smooth;
 }
 
@@ -11,7 +11,7 @@ body {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(90deg, #324a5f, #ccc9dc);
+    background-image: linear-gradient(90deg, #5dd9c1, #b084cc);
 }
 
 .project-card:hover {
