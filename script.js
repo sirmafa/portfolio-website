@@ -18,16 +18,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Initialize EmailJS
+(function() {
+    emailjs.init('u_KSwvc8g5_hu7Q0z');
+})();
+
 // Form submission handling
 const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', async function(e) {
+contactForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    // Get form values
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
     
     // Show loading state
     const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -35,36 +34,34 @@ contactForm.addEventListener('submit', async function(e) {
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
     
-    try {
-        console.log('Sending form data:', { name, email, subject, message });
-        
-        //API Gateway URL
-        const response = await fetch('https://uk5t4xna4f.execute-api.us-east-1.amazonaws.com/prod/contact?v=' + Date.now(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, email, subject, message })
-        });
-        
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
-        const responseText = await response.text();
-        console.log('Response body:', responseText);
-        
-        if (response.ok) {
-            alert('Thank you for reaching out! I will get back to you soon.');
+    // Get form data
+    const templateParams = {
+        from_name: document.getElementById('name').value,
+        from_email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+    };
+    
+    // Send notification email to you
+    emailjs.send('service_wjr2aua', 'template_6sbfxlp', templateParams)
+        .then(function(response) {
+            console.log('Notification sent successfully:', response);
+            
+            // Send auto-reply to visitor
+            return emailjs.send('service_wjr2aua', 'template_0w1xz7z', templateParams);
+        })
+        .then(function(response) {
+            console.log('Auto-reply sent successfully:', response);
+            alert('Thank you for reaching out! You should receive a confirmation email shortly.');
             contactForm.reset();
-        } else {
-            throw new Error(`HTTP ${response.status}: ${responseText}`);
-        }
-    } catch (error) {
-        console.error('Full error details:', error);
-        alert('Sorry, there was an error sending your message. Please try again.');
-    } finally {
-        // Reset button state
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    }
+        })
+        .catch(function(error) {
+            console.error('EmailJS error:', error);
+            alert('Sorry, there was an error sending your message. Please try again.');
+        })
+        .finally(function() {
+            // Reset button state
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
 });
